@@ -19,23 +19,25 @@ ASlingShotPawn::ASlingShotPawn() {
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SlingShotMesh"));
 	MeshComponent->SetupAttachment(RootComponent);
 
-	// Adjusted SpringArm for better framing
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->TargetArmLength = 400.0f; // Pull back slightly for wider view
-	SpringArm->SetRelativeRotation(FRotator(-30.0f, 0.0f, 0.0f)); // Angle down more
-	SpringArm->SetRelativeLocation(FVector(-100.0f, 0.0f, 150.0f)); // Higher and closer
-	SpringArm->bEnableCameraLag = true; // Smooth movement
+	SpringArm->TargetArmLength = 400.0f;
+	SpringArm->SetRelativeRotation(FRotator(-30.0f, 0.0f, 0.0f)); 
+	SpringArm->SetRelativeLocation(FVector(-100.0f, 0.0f, 150.0f)); 
+	SpringArm->bEnableCameraLag = true; 
 	SpringArm->CameraLagSpeed = 5.0f;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
-	Camera->FieldOfView = 90.0f; // Wider FOV for better context
+	Camera->FieldOfView = 90.0f;
 
 	LaunchPoint = CreateDefaultSubobject<USceneComponent>(TEXT("LaunchPoint"));
 	LaunchPoint->SetupAttachment(RootComponent);
 	LaunchPoint->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f));
 
+	PullPlanMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PullPlan"));
+	PullPlanMesh->SetupAttachment(RootComponent);
+	
 	bIsPulling = false;
 	PreviewProjectile = nullptr;
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
@@ -63,10 +65,28 @@ void ASlingShotPawn::Tick(float DeltaTime) {
 			FVector WorldPos, WorldDir;
 			PC->DeprojectScreenPositionToWorld(MouseX, MouseY, WorldPos, WorldDir);
 
-			float T = (LaunchPoint->GetComponentLocation().Z - WorldPos.Z) / WorldDir.Z;
-			PullPosition = WorldPos + WorldDir * T;
+			FVector PlaneNormal = PullPlanMesh->GetForwardVector();
+			FVector PlaneOrigin = PullPlanMesh->GetComponentLocation();
+            
+			float Denominator = FVector::DotProduct(PlaneNormal, WorldDir);
+			if (FMath::Abs(Denominator) > SMALL_NUMBER) {
+				float t = FVector::DotProduct(PlaneNormal, PlaneOrigin - WorldPos) / Denominator;
+				if (t >= 0) {
+					PullPosition = WorldPos + WorldDir * t;
+                    
+					FVector PullVector = PullPosition - LaunchPoint->GetComponentLocation();
+					float PullDistance = PullVector.Size();
+					if (PullDistance > MaxPullDistance) {
+						PullPosition = LaunchPoint->GetComponentLocation() + (PullVector.GetSafeNormal() * MaxPullDistance);
+					}
+                    
+					if (PreviewProjectile) {
+						PreviewProjectile->SetActorLocation(PullPosition);
+					}
 
-			DrawTrajectory();
+					DrawTrajectory();
+				}
+			}
 		}
 	}
 }
@@ -116,33 +136,30 @@ void ASlingShotPawn::ReleaseSlingshot(const FInputActionValue& Value) {
 
 FVector ASlingShotPawn::CalculateLaunchVelocity() {
 	FVector LaunchVector = LaunchPoint->GetComponentLocation() - PullPosition;
-	return LaunchVector * LaunchMultiplier;
+    
+	float PullDistance = LaunchVector.Size();
+	float PullFactor = FMath::Clamp(PullDistance / MaxPullDistance, 0.1f, 1.0f);
+    
+	return LaunchVector * LaunchMultiplier * PullFactor;
 }
 
 void ASlingShotPawn::DrawTrajectory() {
+	FlushPersistentDebugLines(GetWorld());
+    
 	FVector StartLocation = LaunchPoint->GetComponentLocation();
 	FVector Velocity = CalculateLaunchVelocity();
 	FVector Gravity = FVector(0.0f, 0.0f, -980.0f);
 
+	FVector PrevPos = StartLocation;
 	float Time = 0.0f;
+    
 	while (Time <= TrajectoryDuration) {
 		FVector Position = StartLocation + (Velocity * Time) + (0.5f * Gravity * FMath::Square(Time));
-		DrawDebugPoint(GetWorld(), Position, TrajectoryPointSize, FColor::Yellow, false, 0.1f);
+        
+		DrawDebugLine(GetWorld(), PrevPos, Position, FColor::Red, false, 0.0f, 0, 1.0f);
+		DrawDebugPoint(GetWorld(), Position, TrajectoryPointSize, FColor::Yellow, false, 0.0f);
+        
+		PrevPos = Position;
 		Time += TrajectoryTimeStep;
 	}
-}
-
-void ASlingShotPawn::UpdatePreviewProjectile() {
-	if (!PreviewProjectile) return;
-
-	PreviewProjectile->SetActorLocation(PullPosition);
-
-	// Tilt based on lateral offset
-	FVector Forward = SpringArm->GetForwardVector();
-	FVector ToPull = (PullPosition - LaunchPoint->GetComponentLocation()).GetSafeNormal();
-	FVector Right = Forward.Cross(FVector::UpVector);
-	float LateralOffset = FVector::DotProduct(ToPull, Right);
-	float TiltAngle = FMath::Clamp(LateralOffset * 90.0f, -45.0f, 45.0f);
-	FRotator TiltRotation = FRotator(0.0f, 0.0f, TiltAngle);
-	PreviewProjectile->SetActorRotation(TiltRotation);
 }

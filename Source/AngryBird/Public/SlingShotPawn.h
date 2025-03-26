@@ -60,6 +60,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Trajectory")
 	float TrajectoryPointSize = 5.0f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Raycast")
+	UStaticMeshComponent* PullPlanMesh;
+
+	UPROPERTY(EditAnywhere, Category = "Slingshot")
+	float PullLimitY = 150.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Slingshot")
+	float PullLimitZ = 150.0f;
+	
 private:
 	bool bIsPulling;
 	FVector PullPosition;
@@ -69,5 +78,4 @@ private:
 	void ReleaseSlingshot(const FInputActionValue& Value);
 	FVector CalculateLaunchVelocity();
 	void DrawTrajectory();
-	void UpdatePreviewProjectile();
 };
