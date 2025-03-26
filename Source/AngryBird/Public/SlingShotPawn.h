@@ -41,6 +41,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slingshot")
 	float MaxPullDistance = 100.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = "Slingshot")
+	bool bValidPullDirection;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
 	class UInputAction* PullAction;
@@ -68,14 +71,22 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Slingshot")
 	float PullLimitZ = 150.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Slingshot")
+	float SpawnDelay = 3.0f;
+
+	UPROPERTY(VisibleAnywhere, Category = "Slingshot")
+	bool bIsInSpawnDelay = false;
 	
 private:
 	bool bIsPulling;
 	FVector PullPosition;
 	class AProjectile* PreviewProjectile;
 
+	void SpawnPreviewProjectile();
 	void PullSlingshot(const FInputActionValue& Value);
 	void ReleaseSlingshot(const FInputActionValue& Value);
 	FVector CalculateLaunchVelocity();
-	void DrawTrajectory();
+	void DrawTrajectory(FColor TrajectoryColor = FColor::Yellow);
+	void OnSpawnDelayComplete();
 };
