@@ -3,6 +3,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Target.h"
 
 AProjectile::AProjectile() {
 	PrimaryActorTick.bCanEverTick = true;
@@ -31,8 +32,18 @@ void AProjectile::Tick(float DeltaTime) {
 void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, 
 						UPrimitiveComponent* OtherComp, FVector NormalImpulse, 
 						const FHitResult& Hit) {
-	UGeometryCollectionComponent* GeometryCollection = Cast<UGeometryCollectionComponent>(OtherComp);
 	FVector ForceDirection = ProjectileMovement->Velocity.GetSafeNormal();
+
+	UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s"), *OtherActor->GetName());
+
+	ATarget* Target = Cast<ATarget>(OtherActor);
+	if (!Target)
+		return;
+	UGeometryCollectionComponent* GeometryCollection = Cast<UGeometryCollectionComponent>(
+		Target->GetComponentByClass(UGeometryCollectionComponent::StaticClass())
+	);
+	if (!GeometryCollection)
+		GeometryCollection = Cast<UGeometryCollectionComponent>(OtherComp);
 
 	if (GeometryCollection) {
 		float ForceMagnitude = ImpactForceMultiplier * ImpactForceBase;
@@ -55,7 +66,10 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 
 		GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, FString::Printf(TEXT("%f, %f"), Impulse.X, Impulse.Y));
 		
-	}
+		UE_LOG(LogTemp, Warning, TEXT("cast worked"));
+	} else
+		UE_LOG(LogTemp, Warning, TEXT("cast failed"));
+
 	
 	ProjectileMesh->SetSimulatePhysics(true);
 
