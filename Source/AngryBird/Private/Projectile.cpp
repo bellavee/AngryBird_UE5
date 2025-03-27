@@ -2,6 +2,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
+
 AProjectile::AProjectile() {
 	PrimaryActorTick.bCanEverTick = true;
 

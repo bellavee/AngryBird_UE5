@@ -145,20 +145,24 @@ FVector ASlingShotPawn::CalculateLaunchVelocity() {
 
 void ASlingShotPawn::DrawTrajectory() {
 	FlushPersistentDebugLines(GetWorld());
-    
+
 	FVector StartLocation = LaunchPoint->GetComponentLocation();
 	FVector Velocity = CalculateLaunchVelocity();
 	FVector Gravity = FVector(0.0f, 0.0f, -980.0f);
 
 	FVector PrevPos = StartLocation;
 	float Time = 0.0f;
-    
+
 	while (Time <= TrajectoryDuration) {
 		FVector Position = StartLocation + (Velocity * Time) + (0.5f * Gravity * FMath::Square(Time));
-        
-		DrawDebugLine(GetWorld(), PrevPos, Position, FColor::Red, false, 0.0f, 0, 1.0f);
+
+		//Dessiner la trajectoire
+		DrawDebugLine(GetWorld(), PrevPos, Position, FColor::Blue, false, 0.0f, 0, 1.0f);
 		DrawDebugPoint(GetWorld(), Position, TrajectoryPointSize, FColor::Yellow, false, 0.0f);
-        
+
+		//Dessiner le contour du projectile sous forme de sphère
+		DrawDebugSphere(GetWorld(), Position, 10.0f, 12, FColor::Cyan, false, 0.0f);
+
 		PrevPos = Position;
 		Time += TrajectoryTimeStep;
 	}
