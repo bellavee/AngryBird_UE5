@@ -83,7 +83,7 @@ void ASlingShotPawn::Tick(float DeltaTime) {
 										  (LocalPullVector.Y <= 20);
                     PullPosition = PotentialPullPosition;
 
-                	GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, FString::Printf(TEXT("%f, %f"), PullVector.X, PullVector.Y));
+                	// GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, FString::Printf(TEXT("%f, %f"), PullVector.X, PullVector.Y));
                     
                     float PullDistance = PullVector.Size();
                     if (PullDistance > MaxPullDistance) {
