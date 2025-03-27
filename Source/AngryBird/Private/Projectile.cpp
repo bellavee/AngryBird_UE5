@@ -37,11 +37,12 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	UE_LOG(LogTemp, Warning, TEXT("Hit Actor: %s"), *OtherActor->GetName());
 
 	ATarget* Target = Cast<ATarget>(OtherActor);
-	if (!Target)
-		return;
+	if (!Target) return;
+	
 	UGeometryCollectionComponent* GeometryCollection = Cast<UGeometryCollectionComponent>(
 		Target->GetComponentByClass(UGeometryCollectionComponent::StaticClass())
 	);
+
 	if (!GeometryCollection)
 		GeometryCollection = Cast<UGeometryCollectionComponent>(OtherComp);
 
