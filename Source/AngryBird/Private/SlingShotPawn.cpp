@@ -185,7 +185,7 @@ FVector ASlingShotPawn::CalculateLaunchVelocity() {
 
 void ASlingShotPawn::DrawTrajectory(FColor TrajectoryColor) {
 	FlushPersistentDebugLines(GetWorld());
-    
+
 	if (bValidPullDirection) {
 		FVector StartLocation = LaunchPoint->GetComponentLocation();
 		FVector Velocity = CalculateLaunchVelocity();
@@ -193,20 +193,21 @@ void ASlingShotPawn::DrawTrajectory(FColor TrajectoryColor) {
 
 		FVector PrevPos = StartLocation;
 		float Time = 0.0f;
-        
+
 		while (Time <= TrajectoryDuration) {
 			FVector Position = StartLocation + (Velocity * Time) + (0.5f * Gravity * FMath::Square(Time));
-            
-			DrawDebugLine(GetWorld(), PrevPos, Position, TrajectoryColor, false, 0.0f, 0, 1.0f);
-			DrawDebugPoint(GetWorld(), Position, TrajectoryPointSize, TrajectoryColor, false, 0.0f);
-            
+
+			// Dessine une petite sphère pour représenter chaque point de la trajectoire
+			DrawDebugSphere(GetWorld(), Position, 10.0f, 12, TrajectoryColor, false, 0.0f); // Ajuste la taille de la sphère ici
+
 			PrevPos = Position;
 			Time += TrajectoryTimeStep;
 		}
 	}
-    
-	DrawDebugLine(GetWorld(), LaunchPoint->GetComponentLocation(), PullPosition, 
-				 bValidPullDirection ? FColor::Green : FColor::Red, false, -1.0f, 0, 2.0f);
+
+	// Trace une ligne indiquant la direction actuelle
+	DrawDebugLine(GetWorld(), LaunchPoint->GetComponentLocation(), PullPosition,
+		bValidPullDirection ? FColor::Green : FColor::Red, false, -1.0f, 0, 2.0f);
 }
 
 void ASlingShotPawn::OnSpawnDelayComplete() {
