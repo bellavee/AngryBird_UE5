@@ -67,6 +67,13 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 			Hit.Location,
 			ForceDirection.Rotation()
 		);
+
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			SmokeEffects,
+			Hit.Location,
+			ForceDirection.Rotation()
+		);
 	}
 	
 	Destroy();

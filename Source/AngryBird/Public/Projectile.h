@@ -41,6 +41,9 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	UParticleSystem* ImpactEffect;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+	UParticleSystem* SmokeEffects;
 
 private:
 	float ImpactForceMultiplier = 1.0f;
