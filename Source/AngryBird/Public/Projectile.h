@@ -6,6 +6,8 @@
 
 #include "Projectile.generated.h"
 
+UDELEGATE(BlueprintAuthorityOnly)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnTargetDestroyed);
 
 UCLASS()
 
@@ -41,6 +43,10 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	UParticleSystem* ImpactEffect;
+
+
+	UPROPERTY(BlueprintAssignable, Category = "EventDispatchers")
+	FOnTargetDestroyed OnTargetDestroyed;
 
 private:
 	float ImpactForceMultiplier = 1.0f;

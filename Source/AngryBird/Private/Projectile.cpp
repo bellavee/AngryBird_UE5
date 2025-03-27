@@ -2,6 +2,7 @@
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "GeometryCollection/GeometryCollectionComponent.h"
+#include "AngryBirdsGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Target.h"
 
@@ -18,11 +19,14 @@ AProjectile::AProjectile() {
 	ProjectileMovement->bShouldBounce = false;
 	ProjectileMovement->ProjectileGravityScale = 1.0f;
 	ProjectileMesh->SetCollisionProfileName(TEXT("BlockAll"));
+	
 }
 
 void AProjectile::BeginPlay() {
 	Super::BeginPlay();
 	ProjectileMesh->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
+	AAngryBirdsGameModeBase* GameMode = Cast<AAngryBirdsGameModeBase>(GetWorld()->GetAuthGameMode());
+	OnTargetDestroyed.AddDynamic(GameMode, &AAngryBirdsGameModeBase::OnTargetDestroyed);
 }
 
 void AProjectile::Tick(float DeltaTime) {
@@ -48,7 +52,7 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 
 	if (GeometryCollection) {
 		float ForceMagnitude = ImpactForceMultiplier * ImpactForceBase;
-		GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Yellow, FString::Printf(TEXT("%f"), ForceMagnitude));
+		//GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Yellow, FString::Printf(TEXT("%f"), ForceMagnitude));
 		
 		GeometryCollection->AddRadialImpulse(
 			Hit.Location,       // Center
@@ -64,12 +68,12 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 			Impulse,
 			Hit.Location
 		);
-
-		GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, FString::Printf(TEXT("%f, %f"), Impulse.X, Impulse.Y));
+		OnTargetDestroyed.Broadcast();
+		//GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, FString::Printf(TEXT("%f, %f"), Impulse.X, Impulse.Y));
 		
-		UE_LOG(LogTemp, Warning, TEXT("cast worked"));
-	} else
-		UE_LOG(LogTemp, Warning, TEXT("cast failed"));
+		//UE_LOG(LogTemp, Warning, TEXT("cast worked"));
+	} /*else*/
+		//UE_LOG(LogTemp, Warning, TEXT("cast failed"));
 
 	
 	ProjectileMesh->SetSimulatePhysics(true);

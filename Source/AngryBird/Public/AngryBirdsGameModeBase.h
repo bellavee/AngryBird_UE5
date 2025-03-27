@@ -12,9 +12,24 @@
 UCLASS()
 class ANGRYBIRD_API AAngryBirdsGameModeBase : public AGameModeBase
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 public:
-	AAngryBirdsGameModeBase();
+    AAngryBirdsGameModeBase();
+    UFUNCTION()
+    void OnTargetDestroyed();
 protected:
-	void BeginPlay() override;
+    void BeginPlay() override;
+private:
+    int32 Score = 0;
+    int32 TotalTargets = 0;
+    FTimerHandle GameTimerHandle;
+
+
+    UFUNCTION()
+    void EndGame(bool bIsWin);
+    UFUNCTION()
+    void OnTimerComplete();
+public:
+    UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game Rules")
+    float GameTime = 60.0f;
 };

@@ -16,7 +16,6 @@ ATarget::ATarget() {
 	GeometryCollection->ClusterGroupIndex = 0;
 	GeometryCollection->BodyInstance.SetCollisionProfileName(TEXT("PhysicsActor"));
 	SetRootComponent(GeometryCollection);
-
 }
 
 void ATarget::BeginPlay() {
@@ -27,3 +26,14 @@ void ATarget::BeginPlay() {
 void ATarget::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 }
+
+//void ATarget::OnBreak(const FChaosBreakEvent& BreakEvent)
+//{
+//	UE_LOG(LogTemp, Warning, TEXT("chaos break"));
+//	if (!bIsDestroyed)
+//	{
+//		bIsDestroyed = true;
+//		OnTargetDestroyed.Broadcast();
+//		//Destroy();
+//	}
+//}

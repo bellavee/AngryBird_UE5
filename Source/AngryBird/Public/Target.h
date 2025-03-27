@@ -23,4 +23,13 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UGeometryCollectionComponent* GeometryCollection;
+	//UFUNCTION()
+	//void OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsDestroyed = false;
+
+	UFUNCTION()
+	void OnBreak(const FChaosBreakEvent& BreakEvent);*/
+
 };
