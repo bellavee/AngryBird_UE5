@@ -37,7 +37,7 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 		float ForceMagnitude = ImpactForceMultiplier * ImpactForceBase;
 		FVector ForceDirection = ProjectileMovement->Velocity.GetSafeNormal();
 		GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Yellow, FString::Printf(TEXT("%f"), ForceMagnitude));
-
+		
 		GeometryCollection->AddRadialImpulse(
 			Hit.Location,       // Center
 			ForceRadius,        // Radius
@@ -45,7 +45,7 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 			ERadialImpulseFalloff::RIF_Linear,
 			true                // Apply impulse
 		);
-
+		
 		FVector Impulse = ForceDirection * ForceMagnitude * DirectedForceMultiplier;
 		
 		GeometryCollection->AddImpulseAtLocation(
@@ -54,7 +54,7 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 		);
 
 		GEngine->AddOnScreenDebugMessage(-1, 20.0f, FColor::Red, FString::Printf(TEXT("%f, %f"), Impulse.X, Impulse.Y));
-		
+
 		if (ImpactEffect) {
 			UGameplayStatics::SpawnEmitterAtLocation(
 				GetWorld(),
@@ -63,12 +63,15 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 				ForceDirection.Rotation()
 			);
 		}
-		
-		Destroy();
 	}
+	
+	ProjectileMesh->SetSimulatePhysics(true);
+	Destroy();
+
 }
 
 void AProjectile::Launch(FVector LaunchVelocity) {
 	ProjectileMovement->Velocity = LaunchVelocity;
+	ImpactForceMultiplier = LaunchVelocity.Size() / 100.0f;
 }
 

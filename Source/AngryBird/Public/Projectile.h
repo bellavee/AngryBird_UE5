@@ -37,11 +37,11 @@ public:
 	float ForceRadius = 200.0f;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Impact")
-	float DirectedForceMultiplier = 2.0f;
+	float DirectedForceMultiplier = 4.0f;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	UParticleSystem* ImpactEffect;
-	
+
 private:
 	float ImpactForceMultiplier = 1.0f;
 	
@@ -49,4 +49,5 @@ private:
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, 
 			   UPrimitiveComponent* OtherComp, FVector NormalImpulse, 
 			   const FHitResult& Hit);
+
 };
