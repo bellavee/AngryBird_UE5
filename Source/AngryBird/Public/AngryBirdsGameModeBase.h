@@ -9,6 +9,10 @@
 /**
  * 
  */
+
+UDELEGATE(BlueprintAuthorityOnly)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGameEnd, bool, bIsWin);
+
 UCLASS()
 class ANGRYBIRD_API AAngryBirdsGameModeBase : public AGameModeBase
 {
@@ -37,4 +41,6 @@ public:
     int32 GetCurrentScore() const;
     UFUNCTION(BlueprintCallable, Category = "Game")
     float GetTimeRemaining() const;
+    UPROPERTY(BlueprintAssignable, Category = "Game")
+    FOnGameEnd OnGameEnd;
 };

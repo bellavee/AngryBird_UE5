@@ -7,6 +7,7 @@
 #include "Target.h"
 #include "Kismet/GameplayStatics.h"
 
+
 AAngryBirdsGameModeBase::AAngryBirdsGameModeBase()
 {
 	DefaultPawnClass = ASlingShotPawn::StaticClass();
@@ -44,11 +45,13 @@ void AAngryBirdsGameModeBase::EndGame(bool bIsWin)
     if (bIsWin) {
         UE_LOG(LogTemp, Warning, TEXT("you win"));
         GetWorld()->GetTimerManager().ClearTimer(GameTimerHandle);
+        
     }
     else {
         UE_LOG(LogTemp, Warning, TEXT("you loose"));
         UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, false);
     }
+    OnGameEnd.Broadcast(bIsWin);
 }
 
 void AAngryBirdsGameModeBase::OnTimerComplete()
