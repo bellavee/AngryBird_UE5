@@ -13,4 +13,7 @@ AAngryBirdsGameModeBase::AAngryBirdsGameModeBase()
 void AAngryBirdsGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+    UE_LOG(LogTemp, Warning, TEXT("GameMode Actif : %s"), *GetName());
+
 }
