@@ -17,6 +17,7 @@ public:
     AAngryBirdsGameModeBase();
     UFUNCTION()
     void OnTargetDestroyed();
+
 protected:
     void BeginPlay() override;
 private:
@@ -32,4 +33,8 @@ private:
 public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Game Rules")
     float GameTime = 60.0f;
+    UFUNCTION(BlueprintCallable, Category = "Game")
+    int32 GetCurrentScore() const;
+    UFUNCTION(BlueprintCallable, Category = "Game")
+    float GetTimeRemaining() const;
 };

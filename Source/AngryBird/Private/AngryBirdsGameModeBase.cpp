@@ -57,3 +57,13 @@ void AAngryBirdsGameModeBase::OnTimerComplete()
     UE_LOG(LogTemp, Warning, TEXT("GameMode Actif : %s"), *GetName());
 
 }
+
+int32 AAngryBirdsGameModeBase::GetCurrentScore() const
+{
+    return Score;
+}
+
+float AAngryBirdsGameModeBase::GetTimeRemaining() const
+{
+    return GetWorld()->GetTimerManager().GetTimerRemaining(GameTimerHandle);
+}
