@@ -43,6 +43,9 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	UParticleSystem* ImpactEffect;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Effects")
+	UParticleSystem* SmokeEffects;
 
 
 	UPROPERTY(BlueprintAssignable, Category = "EventDispatchers")

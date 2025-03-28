@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Target.h"
 
+
 AProjectile::AProjectile() {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -82,6 +83,13 @@ void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 		UGameplayStatics::SpawnEmitterAtLocation(
 			GetWorld(),
 			ImpactEffect,
+			Hit.Location,
+			ForceDirection.Rotation()
+		);
+
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			SmokeEffects,
 			Hit.Location,
 			ForceDirection.Rotation()
 		);

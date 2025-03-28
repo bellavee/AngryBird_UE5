@@ -20,7 +20,7 @@ void AAngryBirdsGameModeBase::BeginPlay()
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATarget::StaticClass(), Targets);
 
     TotalTargets = Targets.Num();
-    UE_LOG(LogTemp, Warning, TEXT("Nombre total de cibles détectées: %d"), TotalTargets);
+    UE_LOG(LogTemp, Warning, TEXT("Nombre total de cibles dï¿½tectï¿½es: %d"), TotalTargets);
     /*for (AActor* TargetActor : Targets) {
         ATarget* Target = Cast<ATarget>(TargetActor);
         if (Target)
@@ -54,4 +54,6 @@ void AAngryBirdsGameModeBase::EndGame(bool bIsWin)
 void AAngryBirdsGameModeBase::OnTimerComplete()
 {
     EndGame(false);
+    UE_LOG(LogTemp, Warning, TEXT("GameMode Actif : %s"), *GetName());
+
 }
